@@ -1,4 +1,5 @@
 mod day_three;
+mod day_four;
 
 #[cfg(test)]
 mod tests {

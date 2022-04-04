@@ -10,6 +10,10 @@ pub enum OpCode {
     Mul = 2,
     Input = 3,
     Out = 4,
+    JumpIfTrue = 5,
+    JumpIfFalse = 6,
+    LessThan = 7,
+    Equals = 8,
     Halt = 99,
 }
 
@@ -26,6 +30,10 @@ impl From<usize> for OpCode {
             x if x == OpCode::Mul as usize => OpCode::Mul,
             x if x == OpCode::Input as usize => OpCode::Input,
             x if x == OpCode::Out as usize => OpCode::Out,
+            x if x == OpCode::JumpIfTrue as usize => OpCode::JumpIfTrue,
+            x if x == OpCode::JumpIfFalse as usize => OpCode::JumpIfFalse,
+            x if x == OpCode::LessThan as usize => OpCode::LessThan,
+            x if x == OpCode::Equals as usize => OpCode::Equals,
             x if x == OpCode::Halt as usize => OpCode::Halt,
             _ => panic!("Should have received a valid OpCode, got {}", value),
         }
@@ -58,7 +66,7 @@ fn get_val(ops: &Vec<i64>, index: usize, mode: Mode) -> i64 {
     }
 }
 
-pub fn perform_ops(ops: &mut Vec<i64>) {
+pub fn perform_ops(ops: &mut Vec<i64>, input: i64) {
     let mut index = 0;
     let (mut _mode3, mut mode2, mut mode1, mut op) = parse_op(ops[index] as usize);
 
@@ -80,14 +88,53 @@ pub fn perform_ops(ops: &mut Vec<i64>) {
             }
             OpCode::Input => {
                 let arg = ops[index + 1];
-                // Hardcoded input value
-                ops[arg as usize] = 1;
+                ops[arg as usize] = input;
                 index += 2;
             }
             OpCode::Out => {
                 let arg = ops[ops[index + 1] as usize];
                 println!("Out: {}", arg);
                 index += 2;
+            }
+            OpCode::JumpIfTrue => {
+                let arg1 = get_val(&ops, index + 1, mode1);
+                let arg2 = get_val(&ops, index + 2, mode2);
+                if arg1 != 0 {
+                    index = arg2 as usize;
+                } else {
+                    index += 3;
+                }
+            }
+            OpCode::JumpIfFalse => {
+                let arg1 = get_val(&ops, index + 1, mode1);
+                let arg2 = get_val(&ops, index + 2, mode2);
+                if arg1 == 0 {
+                    index = arg2 as usize;
+                } else {
+                    index += 3;
+                }
+            }
+            OpCode::LessThan => {
+                let arg1 = get_val(&ops, index + 1, mode1);
+                let arg2 = get_val(&ops, index + 2, mode2);
+                let target_index = ops[index + 3] as usize;
+                if arg1 < arg2 {
+                    ops[target_index] = 1;
+                } else {
+                    ops[target_index] = 0;
+                }
+                index += 4;
+            }
+            OpCode::Equals => {
+                let arg1 = get_val(&ops, index + 1, mode1);
+                let arg2 = get_val(&ops, index + 2, mode2);
+                let target_index = ops[index + 3] as usize;
+                if arg1 == arg2 {
+                    ops[target_index] = 1;
+                } else {
+                    ops[target_index] = 0;
+                }
+                index += 4;
             }
             _ => panic!("Invalid opcode {:?} at index {:?}", ops[index], index),
         }
@@ -149,6 +196,6 @@ mod tests {
             .map(|x| x.parse().unwrap())
             .collect();
 
-        perform_ops(&mut input);
+        perform_ops(&mut input, 1);
     }
 }

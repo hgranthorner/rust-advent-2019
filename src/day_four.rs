@@ -1,6 +1,6 @@
 #![allow(dead_code, unused_variables)]
 
-use std::{any, collections::HashMap};
+use std::collections::HashMap;
 
 pub fn checks(val: u64) -> bool {
     let s = val.to_string();
@@ -34,18 +34,19 @@ pub fn checks(val: u64) -> bool {
     true
 }
 
-pub fn partition<T: std::cmp::PartialEq, I: IntoIterator<Item = T>>(x: I) -> Vec<Vec<T>>
+pub fn partition<T, I>(x: I) -> Vec<Vec<T>>
 where
-    <I as IntoIterator>::Item: PartialEq,
+    T: PartialEq,
+    I: IntoIterator<Item = T>,
 {
     let mut v = vec![vec![]];
     for i in x {
-        let last_v: &mut Vec<T> = v.last().unwrap().as_mut();
+        let last_v = v.last_mut().unwrap();
         let last = last_v.last();
-        if last.is_none() || *last.unwrap() != i {
-            v.push(vec![i]);
-        } else {
+        if last.is_none() || *last.unwrap() == i {
             last_v.push(i);
+        } else {
+            v.push(vec![i]);
         }
     }
 
@@ -57,25 +58,20 @@ pub fn checks2(val: u64) -> bool {
 
     let char_vec: Vec<char> = s.chars().collect();
 
-    let mut any_adjacent = false;
-
     let cvl = char_vec.len();
 
-    for i in 0..cvl - 2 {
-        let c1 = char_vec[i];
-        let c2 = char_vec[i + 1];
-        let c3 = char_vec[i + 2];
-        match (c1 == c2, c2 == c3) {
-            (true, true) => {
-                // breaks_rule = true;
-                break;
-            }
-            (true, false) => {
-                any_adjacent = true;
-                break;
-            }
-            _ => continue,
+    let mut any_two = false;
+    let vv = partition(&char_vec);
+
+    for x in vv {
+        if x.len() == 2 {
+            any_two = true;
+            break;
         }
+    }
+
+    if !any_two {
+        return false;
     }
 
     for i in 0..cvl - 1 {
@@ -99,6 +95,16 @@ pub fn solve_first(start: u64, end: u64) -> u64 {
     count
 }
 
+pub fn solve_second(start: u64, end: u64) -> u64 {
+    let mut count = 0;
+    for i in start..=end {
+        if checks2(i) {
+            count += 1;
+        }
+    }
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -114,7 +120,7 @@ mod tests {
     fn check_checks2() {
         assert!(checks2(112233));
         assert!(!checks2(123444));
-        assert!(!checks2(111122));
+        assert!(checks2(111122));
     }
 
     #[test]
@@ -123,8 +129,14 @@ mod tests {
     }
 
     #[test]
+    fn solve_second_input() {
+        assert_eq!(solve_second(130524, 678275), 2090)
+    }
+
+    #[test]
     fn test_partition() {
         let x = partition(vec![1, 1, 2, 3, 3, 4]);
+        assert_eq!(x, vec![vec![1, 1], vec![2], vec![3, 3], vec![4]])
     }
 
     #[test]

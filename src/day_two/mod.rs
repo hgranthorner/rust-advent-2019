@@ -4,7 +4,6 @@ use std::io::Write;
 
 #[derive(PartialEq, Debug)]
 pub enum OpCode {
-    Invalid = 0,
     Add = 1,
     Mul = 2,
     Halt = 99,
@@ -56,7 +55,7 @@ pub fn solve_first(s: &str) -> usize {
         .split(",")
         .map(|x| {
             println!("{:?}", x);
-            std::io::stdout().flush();
+            std::io::stdout().flush().unwrap();
             x.parse().unwrap()
         })
         .collect();

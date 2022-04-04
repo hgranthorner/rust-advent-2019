@@ -23,16 +23,7 @@ impl TryFrom<usize> for OpCode {
     }
 }
 
-pub fn solve_first(s: &str) -> usize {
-    let mut ops: Vec<usize> = s
-        .split(",")
-        .map(|x| {
-            println!("{:?}", x);
-            std::io::stdout().flush();
-            x.parse().unwrap()
-        })
-        .collect();
-
+pub fn perform_ops(ops: &mut Vec<usize>) {
     let mut index = 0;
     let mut op: OpCode = ops[index]
         .try_into()
@@ -58,6 +49,19 @@ pub fn solve_first(s: &str) -> usize {
         index += 4;
         op = ops[index].try_into().unwrap();
     }
+}
+
+pub fn solve_first(s: &str) -> usize {
+    let mut ops: Vec<usize> = s
+        .split(",")
+        .map(|x| {
+            println!("{:?}", x);
+            std::io::stdout().flush();
+            x.parse().unwrap()
+        })
+        .collect();
+
+    perform_ops(&mut ops);
 
     ops[0]
 }
@@ -69,28 +73,28 @@ mod tests {
 
     #[test]
     fn solves_first_sample() {
-        let val = fs::read_to_string("files/day_two_sample.txt").unwrap();
+        let val = fs::read_to_string("resources/day_two_sample.txt").unwrap();
         let num = solve_first(&val);
         assert_eq!(3500, num);
     }
 
     #[test]
     fn solves_first_input() {
-        let path = "files/day_two_input.txt";
+        let path = "resources/day_two_input.txt";
         let num = solve_first(path);
         assert_eq!(3931283, num);
     }
 
     // #[test]
     // fn solves_second_sample() {
-    //     let path = "files/day_two_sample.txt";
+    //     let path = "resources/day_two_sample.txt";
     //     let num = solve_second(path);
     //     assert_eq!(50346, num);
     // }
 
     // #[test]
     // fn solves_second_input() {
-    //     let path = "files/day_two_input.txt";
+    //     let path = "resources/day_two_input.txt";
     //     let num = solve_second(path);
     //     assert_eq!(5148724, num);
     // }

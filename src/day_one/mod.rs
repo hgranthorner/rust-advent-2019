@@ -49,28 +49,28 @@ mod tests {
     use super::*;
     #[test]
     fn solves_first_sample() {
-        let path = "files/day_one_sample.txt";
+        let path = "resources/day_one_sample.txt";
         let num = solve_first(std::path::Path::new(path));
         assert_eq!(33583, num);
     }
 
     #[test]
     fn solves_first_input() {
-        let path = "files/day_one_input.txt";
+        let path = "resources/day_one_input.txt";
         let num = solve_first(std::path::Path::new(path));
         assert_eq!(3434390, num);
     }
 
     #[test]
     fn solves_second_sample() {
-        let path = "files/day_one_sample.txt";
+        let path = "resources/day_one_sample.txt";
         let num = solve_second(std::path::Path::new(path));
         assert_eq!(50346, num);
     }
 
     #[test]
     fn solves_second_input() {
-        let path = "files/day_one_input.txt";
+        let path = "resources/day_one_input.txt";
         let num = solve_second(std::path::Path::new(path));
         assert_eq!(5148724, num);
     }
